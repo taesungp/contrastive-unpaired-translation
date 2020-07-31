@@ -5,11 +5,6 @@ import ntpath
 import time
 from . import util, html
 from subprocess import Popen, PIPE
-# try:
-#from func_timeout import func_timeout, FunctionTimedOut
-# except ImportError:
-#    print("module func_timeout was not installed. Please install func_timeout using pip install func-timeout.")
-
 
 if sys.version_info[0] == 2:
     VisdomExceptionBase = Exception
@@ -38,7 +33,6 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
 
     for label, im_data in visuals.items():
         im = util.tensor2im(im_data)
-        #image_name = '%s_%s.png' % (name, label)
         image_name = '%s/%s.png' % (label, name)
         os.makedirs(os.path.join(image_dir, label), exist_ok=True)
         save_path = os.path.join(image_dir, image_name)

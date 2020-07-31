@@ -42,7 +42,7 @@ class SingleImageDataset(BaseDataset):
         A_img = Image.open(self.A_paths[0]).convert('RGB')
         B_imgs = [Image.open(self.B_paths[i]).convert('RGB') for i in range(self.B_size)]
         print("Image sizes %s and %s" % (str(A_img.size), str(B_imgs[0].size)))
-        #if A_img.size[0] >= opt.load_size:
+        # if A_img.size[0] >= opt.load_size:
         A_img_size = opt.load_size * 2 if self.opt.use_balanced_zooming else opt.load_size
         A_img = A_img.resize((A_img_size, int(round(A_img.size[1] * A_img_size / A_img.size[0]))), Image.BICUBIC)
         resized_B_imgs = []
@@ -76,16 +76,16 @@ class SingleImageDataset(BaseDataset):
         else:
             self.transform_A = get_transform(util.copyconf(self.opt, preprocess="scale_width", no_flip=True),
                                              grayscale=(input_nc == 1), method=Image.BILINEAR)
-            #self.transform_B = get_transform(util.copyconf(self.opt, preprocess="scale_width"),
+            # self.transform_B = get_transform(util.copyconf(self.opt, preprocess="scale_width"),
             #                                 grayscale=(output_nc == 1), method=Image.BILINEAR)
 
         max_zoom = 384 / 1024  # just arbitrary number
         A_zoom = max_zoom
-        #A_zoom = min(0.9, (max_zoom * larger_size) / A_img.size[0]) if opt.use_balanced_zooming else max_zoom
+        # A_zoom = min(0.9, (max_zoom * larger_size) / A_img.size[0]) if opt.use_balanced_zooming else max_zoom
         zoom_levels_A = np.random.uniform(A_zoom, 1.0, size=(1000 // opt.batch_size + 1, 1, 2))
         self.zoom_levels_A = np.reshape(np.tile(zoom_levels_A, (1, opt.batch_size, 1)), [-1, 2])
         B_zoom = max_zoom
-        #B_zoom = min(0.9, (max_zoom * larger_size) / B_img.size[0]) if opt.use_balanced_zooming else max_zoom
+        # B_zoom = min(0.9, (max_zoom * larger_size) / B_img.size[0]) if opt.use_balanced_zooming else max_zoom
         zoom_levels_B = np.random.uniform(B_zoom, 1.0, size=(1000 // opt.batch_size + 1, 1, 2))
         self.zoom_levels_B = np.reshape(np.tile(zoom_levels_B, (1, opt.batch_size, 1)), [-1, 2])
 
@@ -107,13 +107,15 @@ class SingleImageDataset(BaseDataset):
         else:   # randomize the index for domain B to avoid fixed pairs.
             index_B = random.randint(0, self.B_size - 1)
         B_path = self.B_paths[index_B]
-<<<<<<< HEAD
+
+
+<< << << < HEAD
         A_img = Image.open(A_path).convert('RGB')
         B_img = Image.open(B_path).convert('RGB')
-=======
+== == == =
         A_img = self.A_img
         B_img = self.B_imgs[index_B]
->>>>>>> 6b836b5c63eeb2bb9719662acce3c4c62960a37a
+>>>>>> > 6b836b5c63eeb2bb9719662acce3c4c62960a37a
 
         # apply image transformation
         if self.opt.phase == "train":
@@ -122,28 +124,28 @@ class SingleImageDataset(BaseDataset):
                      'flip': random.random() > 0.5
                      }
 
-            #print("%04d\t%.2f\t%04d" % (index, param['scale_factor'], param['patch_index']))
+            # print("%04d\t%.2f\t%04d" % (index, param['scale_factor'], param['patch_index']))
             transform_A = get_transform(self.opt, params=param, method=Image.BILINEAR)
             A = transform_A(A_img)
 
             param = {'scale_factor': self.zoom_levels_B[index],
                      'patch_index': self.seed_prime_number_B * (index + 1),
                      'flip': random.random() > 0.5
-<<<<<<< HEAD
+<< << << < HEAD
                      }
             transform_B = get_transform(self.opt, params=param)
-=======
+== == == =
             }
             transform_B = get_transform(self.opt, params=param, method=Image.BILINEAR)
->>>>>>> 6b836b5c63eeb2bb9719662acce3c4c62960a37a
+>> >>>> > 6b836b5c63eeb2bb9719662acce3c4c62960a37a
             B = transform_B(B_img)
         else:
             A = self.transform_A(A_img)
             param = {'size': (A.size(1), A.size(2)),
                      'flip': False}
             transform_B = get_transform(util.copyconf(self.opt, preprocess="fixsize"),
-                                        params=param, method=Image.BILINEAR)
-            B = transform_B(B_img)
+                                        params = param, method = Image.BILINEAR)
+            B=transform_B(B_img)
 
         return {'A': A, 'B': B, 'A_paths': A_path, 'B_paths': B_path}
 

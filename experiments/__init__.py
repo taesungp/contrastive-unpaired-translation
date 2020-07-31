@@ -1,6 +1,5 @@
 import os
 import importlib
-import glob
 
 
 def find_launcher_using_name(launcher_name):
@@ -31,7 +30,7 @@ if __name__ == "__main__":
     import pickle
 
     assert len(sys.argv) >= 3
-    
+
     name = sys.argv[1]
     Launcher = find_launcher_using_name(name)
 

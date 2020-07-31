@@ -89,11 +89,11 @@ cd CUT
 
 - Install PyTorch 1.1 and other dependencies (e.g., torchvision, visdom, dominate, gputil).
 
-For pip users, please type the command `pip install -r requirements.txt`.
+  For pip users, please type the command `pip install -r requirements.txt`.
 
-For Conda users, we provide an installation script `bash ./scripts/conda_deps.sh`.
+  For Conda users, we provide an installation script `bash ./scripts/conda_deps.sh`.
 
-Alternatively, you can create a new Conda environment using `conda env create -f environment.yml`.
+  Alternatively, you can create a new Conda environment using `conda env create -f environment.yml`.
 
 
 ### CUT and FastCUT Training and Test

@@ -126,7 +126,8 @@ def get_norm_layer(norm_type='instance'):
     elif norm_type == 'instance':
         norm_layer = functools.partial(nn.InstanceNorm2d, affine=False, track_running_stats=False)
     elif norm_type == 'none':
-        def norm_layer(x): return Identity()
+        def norm_layer(x):
+            return Identity()
     else:
         raise NotImplementedError('normalization layer [%s] is not found' % norm_type)
     return norm_layer
@@ -1003,7 +1004,6 @@ class ResnetGenerator(nn.Module):
                 if layer_id == layers[-1] and encode_only:
                     # print('encoder only return features')
                     return feats  # return intermediate features alone; stop in the last layers
-
 
             return feat, feats  # return both output and intermediate features
         else:

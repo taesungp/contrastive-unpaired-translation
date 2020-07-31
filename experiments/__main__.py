@@ -43,11 +43,6 @@ if __name__ == "__main__":
     name = opt.name
     Launcher = find_launcher_using_name(name)
 
-    # cache = "/tmp/tmux_launcher/{}".format(name)
-    # if os.path.isfile(cache):
-    #    print('loading existing instance at {}'.format(cache))
-    #    instance = pickle.load(open(cache, 'rb'))
-    # else:
     instance = Launcher()
 
     cmd = opt.cmd
@@ -57,10 +52,7 @@ if __name__ == "__main__":
     elif cmd == "stop":
         instance.stop()
     elif cmd == "send":
-        # expid = int(opt.id)
-        # cmd = int(sys.argv[4])
         assert False
-        # instance.send_command(expid, cmd, continue_train=opt.continue_train)
     elif cmd == "close":
         instance.close()
     elif cmd == "dry":
@@ -93,6 +85,3 @@ if __name__ == "__main__":
         instance.create_comparison_html(name, ids, opt.subdir, opt.title, opt.phase)
     else:
         raise ValueError("Command not recognized")
-
-    # os.makedirs("/tmp/tmux_launcher/", exist_ok=True)
-    # pickle.dump(instance, open(cache, 'wb'))
