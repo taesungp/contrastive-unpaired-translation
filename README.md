@@ -26,7 +26,7 @@ UC Berkeley and Adobe Research<br>
 
 <br><br><br>
 
-### Pseudo code 
+### Pseudo code
 ```python
 
 import torch
@@ -96,9 +96,9 @@ For Conda users, we provide an installation script scripts/conda_deps.sh. Altern
 
 ### CUT and FastCUT Training and Test
 
-- Download the grumpify dataset (Fig 8 of the paper. Russian Blue -> Grumpy Cats)
+- Download the grumpifycat dataset (Fig 8 of the paper. Russian Blue -> Grumpy Cats)
 ```bash
-bash ./datasets/download_cut_dataset.sh grumpify
+bash ./datasets/download_cut_dataset.sh grumpifycat
 ```
 The dataset is downloaded and unzipped at `./datasets/grumpifycat/`.
 
