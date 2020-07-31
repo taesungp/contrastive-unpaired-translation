@@ -116,7 +116,8 @@ python train.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mod
 # Trains the FastCUT model
 python train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT --CUT_mode FastCUT
 ```
-The checkpoints are stored at `./checkpoints/grumpycat_*/web`.
+CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory), and faster (twice faster to train) alternative to CycleGAN, using the same architecture of CycleGAN networks. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
+The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
 ### Training using our launcher scripts
 
