@@ -4,13 +4,13 @@ channels:
 - defaults
 dependencies:
 - python=3.5.5
-- pytorch=0.4.1
+- pytorch=1.1.0
 - scipy
 - pip:
-  - dominate==2.3.1
+  - dominate==2.4.0
   - git+https://github.com/pytorch/vision.git
-  - Pillow==5.0.0
-  - numpy==1.14.1
-  - visdom==0.1.7
+  - Pillow==6.1.0
+  - numpy==1.16.4
+  - visdom==0.1.8
   - packaging
-  - gputil
+  - GPUtil==1.4.0
