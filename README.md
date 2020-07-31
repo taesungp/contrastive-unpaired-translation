@@ -2,7 +2,7 @@
 
 # Contrastive Unpaired Translation (CUT)
 
-### [video](https://youtu.be/Llg0vE_MVgk) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/abs/2007.15651)
+### [video](https://youtu.be/Llg0vE_MVgk) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/pdf/2007.15651)
 <br>
 
 <img src='imgs/gif_cut.gif' align="right" width=960>
@@ -11,7 +11,7 @@
 
 
 
-We provide our PyTorch implementation for unpaired image-to-image translation based on patchwise contrastive learning and adversarial learning.  No hand-crafted loss and inverse network is used. Compared to [CycleGAN](https://github.com/junyanz/CycleGAN), model training is faster and less memory-intensive. In addition, our method can be extended to single image training, where each “domain” is only a *single* image.
+We provide our PyTorch implementation for unpaired image-to-image translation based on patchwise contrastive learning and adversarial learning.  No hand-crafted loss and inverse network is used. Compared to [CycleGAN](https://github.com/junyanz/CycleGAN), our model training is faster and less memory-intensive. In addition, our method can be extended to single image training, where each “domain” is only a *single* image.
 
 
 
@@ -28,7 +28,6 @@ UC Berkeley and Adobe Research<br>
 
 ### Pseudo code
 ```python
-
 import torch
 cross_entropy_loss = torch.nn.CrossEntropyLoss()
 
@@ -91,7 +90,10 @@ cd CUT
 - Install PyTorch 1.4 and other dependencies (e.g., torchvision, func-timeout, gputil).
 
 For pip users, please type the command `pip install -r requirements.txt`.
-For Conda users, we provide an installation script scripts/conda_deps.sh. Alternatively, you can create a new Conda environment using `conda env create -f environment.yml`.
+
+For Conda users, we provide an installation script `bash ./scripts/conda_deps.sh`.
+
+Alternatively, you can create a new Conda environment using `conda env create -f environment.yml`.
 
 
 ### CUT and FastCUT Training and Test
@@ -104,16 +106,16 @@ The dataset is downloaded and unzipped at `./datasets/grumpifycat/`.
 
 The other datasets can be downloaded using
 ```bash
-bash ./datasets/download_cut_dataset.sh [dataset_name]
+bash ./datasets/download_cyclegan_dataset.sh [dataset_name]
 ```
 , a script provided by the [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/datasets.md) repo.
 
-- Train the model:
+- Train the CUT model:
 ```bash
-# Trains the CUT model
 python train.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT
-
-# Trains the FastCUT model
+```
+ Or train the FastCUT model
+ ```bash
 python train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT --CUT_mode FastCUT
 ```
 CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory), and faster (twice faster to train) alternative to CycleGAN, using the same architecture of CycleGAN networks. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
@@ -131,7 +133,7 @@ python -m experiments grumpifycat train 0
 python -m experiments grumpifycat train 1
 ```
 
-To test using the laucher,
+To test using the launcher,
 ```bash
 python -m experiments grumpifycat test 0
 python -m experiments grumpifycat test 1
@@ -152,7 +154,7 @@ The tutorial for the Single-Image Translation will be released soon.
 
 
 ### Citation
-If you use this code for your research, please cite our [paper](https://arxiv.org/abs/2007.15651).
+If you use this code for your research, please cite our [paper](https://arxiv.org/pdf/2007.15651).
 ```
 @inproceedings{park2020cut,
   title={Contrastive Learning for Unpaired Image-to-Image Translation},
