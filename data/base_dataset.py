@@ -29,6 +29,7 @@ class BaseDataset(data.Dataset, ABC):
         self.opt = opt
         self.root = opt.dataroot
         self.current_epoch = 0
+
     @staticmethod
     def modify_commandline_options(parser, is_train):
         """Add new dataset-specific options, and rewrite default values for existing options.
@@ -112,9 +113,8 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
     if 'trim' in opt.preprocess:
         transform_list.append(transforms.Lambda(lambda img: __trim(img, opt.crop_size)))
 
-    #if opt.preprocess == 'none':
+    # if opt.preprocess == 'none':
     transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=method)))
-
 
     if not opt.no_flip:
         if params is None or 'flip' not in params:
@@ -138,7 +138,6 @@ def __make_power_2(img, base, method=Image.BICUBIC):
     if h == oh and w == ow:
         return img
 
-    #__print_size_warning(ow, oh, w, h)
     return img.resize((w, h), method)
 
 

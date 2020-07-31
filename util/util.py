@@ -139,6 +139,7 @@ def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
+
 def correct_resize_label(t, size):
     device = t.device
     t = t.detach().cpu()
@@ -158,9 +159,8 @@ def correct_resize(t, size, mode=Image.BICUBIC):
     t = t.detach().cpu()
     resized = []
     for i in range(t.size(0)):
-        one_t = t[i:i+1]
+        one_t = t[i:i + 1]
         one_image = Image.fromarray(tensor2im(one_t)).resize(size, Image.BICUBIC)
         resized_t = torchvision.transforms.functional.to_tensor(one_image) * 2 - 1.0
         resized.append(resized_t)
     return torch.stack(resized, dim=0).to(device)
-        
