@@ -7,8 +7,6 @@ from torch.optim import lr_scheduler
 import numpy as np
 from .stylegan_networks import StyleGAN2Discriminator, StyleGAN2Generator, TileStyleGAN2Discriminator
 
-# from IPython import embed
-
 ###############################################################################
 # Helper Functions
 ###############################################################################

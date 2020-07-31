@@ -98,7 +98,7 @@ cd CUT
 
 ### CUT and FastCUT Training and Test
 
-- Download the grumpifycat dataset (Fig 8 of the paper. Russian Blue -> Grumpy Cats)
+- Download the `grumpifycat` dataset (Fig 8 of the paper. Russian Blue -> Grumpy Cats)
 ```bash
 bash ./datasets/download_cut_dataset.sh grumpifycat
 ```
@@ -119,7 +119,7 @@ The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
 - Test the CUT model:
 ```bash
-python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT
+python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT --phase train
 
 ```
 
@@ -177,4 +177,4 @@ If you use this code for your research, please cite our [paper](https://arxiv.or
 
 
 ### Acknowledgments
-We thank Allan Jabri and Phillip Isola for helpful discussion and feedback. Our code is developed based on [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We also thank [pytorch-fid](https://github.com/mseitzer/pytorch-fid) for FID computation and [drn](https://github.com/fyu/drn) for mIoU computation, and [stylegan2-pytorch](https://github.com/rosinality/stylegan2-pytorch/) for the PyTorch implementation of StyleGAN2 used in single-image translation.
+We thank Allan Jabri and Phillip Isola for helpful discussion and feedback. Our code is developed based on [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We also thank [pytorch-fid](https://github.com/mseitzer/pytorch-fid) for FID computation,  [drn](https://github.com/fyu/drn) for mIoU computation, and [stylegan2-pytorch](https://github.com/rosinality/stylegan2-pytorch/) for the PyTorch implementation of StyleGAN2 used in our single-image translation setting.
