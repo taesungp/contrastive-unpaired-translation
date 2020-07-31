@@ -87,7 +87,7 @@ git clone https://github.com/taesungp/contrastive-unpaired-translation CUT
 cd CUT
 ```
 
-- Install PyTorch 1.4 and other dependencies (e.g., torchvision, func-timeout, gputil).
+- Install PyTorch 1.1 and other dependencies (e.g., torchvision, visdom, dominate, gputil).
 
 For pip users, please type the command `pip install -r requirements.txt`.
 
