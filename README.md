@@ -104,11 +104,7 @@ bash ./datasets/download_cut_dataset.sh grumpifycat
 ```
 The dataset is downloaded and unzipped at `./datasets/grumpifycat/`.
 
-The other datasets can be downloaded using
-```bash
-bash ./datasets/download_cyclegan_dataset.sh [dataset_name]
-```
-, a script provided by the [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/datasets.md) repo.
+- To view training results and loss plots, run `python -m visdom.server` and click the URL http://localhost:8097.
 
 - Train the CUT model:
 ```bash
@@ -121,22 +117,29 @@ python train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT --CUT
 CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory), and faster (twice faster to train) alternative to CycleGAN, using the same architecture of CycleGAN networks. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
 The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
+- Test the CUT model:
+```bash
+python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT
+
+```
+
+The test results will be saved to a html file here: `./results/grumpifycat/latest_test/index.html`.
+
+
 ### Training using our launcher scripts
 
-Please see `experiments/grumpifycat_launcher.py` that generates the above command line arguments.
-The launcher scripts are useful for configuring rather complicated command-line arguments of
-training and testing.
+Please see `experiments/grumpifycat_launcher.py` that generates the above command line arguments. The launcher scripts are useful for configuring rather complicated command-line arguments of training and testing.
 
 Using the launcher, the command below generates the training command of CUT and FastCUT.
 ```bash
-python -m experiments grumpifycat train 0
-python -m experiments grumpifycat train 1
+python -m experiments grumpifycat train 0   # CUT
+python -m experiments grumpifycat train 1   # FastCUT
 ```
 
 To test using the launcher,
 ```bash
-python -m experiments grumpifycat test 0
-python -m experiments grumpifycat test 1
+python -m experiments grumpifycat test 0   # CUT
+python -m experiments grumpifycat test 1   # FastCUT
 ```
 
 Possible commands are run, run_test, launch, close, and so on. Please see experiments/__main__.py for all commands
@@ -145,12 +148,20 @@ Possible commands are run, run_test, launch, close, and so on. Please see experi
 
 ### Apply a pre-trained CUT model and evaluate
 
-The tutorial for applying pretrained models will be released soon.
+The tutorial for using pretrained models will be released soon.
 
 ### SinCUT Single Image Unpaired Training
 
 The tutorial for the Single-Image Translation will be released soon.
 
+
+
+
+<!-- The other datasets can be downloaded using -->
+<!-- ```bash -->
+<!-- bash ./datasets/download_cyclegan_dataset.sh [dataset_name] -->
+<!-- ``` -->
+<!-- , a script provided by the [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/datasets.md) repo. -->
 
 
 ### Citation
