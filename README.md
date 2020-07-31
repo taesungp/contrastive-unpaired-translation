@@ -2,7 +2,7 @@
 
 # Contrastive Unpaired Translation (CUT)
 
-### [video](https://youtu.be/Llg0vE_MVgk) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/pdf/1703.10593.pdf)
+### [video](https://youtu.be/Llg0vE_MVgk) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/abs/2007.15651)
 <br>
 
 <img src='imgs/gif_cut.gif' align="right" width=960>
@@ -151,7 +151,7 @@ The tutorial for the Single-Image Translation will be released soon.
 
 
 ### Citation
-If you use this code for your research, please cite our [paper]().
+If you use this code for your research, please cite our [paper](https://arxiv.org/abs/2007.15651).
 ```
 @inproceedings{park2020cut,
   title={Contrastive Learning for Unpaired Image-to-Image Translation},
