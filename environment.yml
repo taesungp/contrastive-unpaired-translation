@@ -3,7 +3,7 @@ channels:
 - peterjc123
 - defaults
 dependencies:
-- python=3.5.5
+- python=3.6
 - pytorch=1.1.0
 - scipy
 - pip:
