@@ -177,6 +177,24 @@ If you use this code for your research, please cite our [paper](https://arxiv.or
 }
 ```
 
+If you use the original [pix2pix](https://phillipi.github.io/pix2pix/) and [CycleGAN](https://junyanz.github.io/CycleGAN/) model included in this repo, please cite the following papers
+```
+@inproceedings{CycleGAN2017,
+  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networkss},
+  author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
+  booktitle={Computer Vision (ICCV), 2017 IEEE International Conference on},
+  year={2017}
+}
+
+
+@inproceedings{isola2017image,
+  title={Image-to-Image Translation with Conditional Adversarial Networks},
+  author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
+  booktitle={Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on},
+  year={2017}
+}
+```
+
 
 ### Acknowledgments
 We thank Allan Jabri and Phillip Isola for helpful discussion and feedback. Our code is developed based on [pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix). We also thank [pytorch-fid](https://github.com/mseitzer/pytorch-fid) for FID computation,  [drn](https://github.com/fyu/drn) for mIoU computation, and [stylegan2-pytorch](https://github.com/rosinality/stylegan2-pytorch/) for the PyTorch implementation of StyleGAN2 used in our single-image translation setting.
