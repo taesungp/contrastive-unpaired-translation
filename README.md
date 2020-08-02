@@ -33,7 +33,7 @@ cross_entropy_loss = torch.nn.CrossEntropyLoss()
 
 # Input: f_q (BxCxS) and sampled features from H(G_enc(x))
 # Input: f_k (BxCxS) are sampled features from H(G_enc(G(x))
-# Input: tau is the temperature used in NCE loss.
+# Input: tau is the temperature used in PatchNCE loss.
 # Output: PatchNCE loss
 def PatchNCELoss(f_q, f_k, tau=0.07):
     # batch size, channel size, and number of sample locations
@@ -52,7 +52,7 @@ def PatchNCELoss(f_q, f_k, tau=0.07):
     # calculate logits: (B)x(S)x(S+1)
     logits = torch.cat((l_pos, l_neg), dim=2) / tau
 
-    # return NCE loss
+    # return PatchNCE loss
     predictions = logits.flatten(0, 1)
     targets = torch.zeros(B * S, dtype=torch.long)
     return cross_entropy_loss(predictions, targets)
@@ -124,7 +124,7 @@ The test results will be saved to a html file here: `./results/grumpifycat/lates
 ### CUT, FastCUT, and CycleGAN
 <img src="imgs/horse2zebra_comparison.jpg" width="800px"/><br>
 
-CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory, can fit a larger image), and faster (twice faster to train) alternative to CycleGAN, using the same architecture of CycleGAN networks. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
+CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory, can fit a larger image), and faster (twice faster to train) alternative to CycleGAN. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
 
 In the above figure, we measure the percentage of pixels belonging to the horse/zebra bodies, using a pre-trained semantic segmentation model. We find a distribution mismatch between sizes of horses and zebras images -- zebras usually appear larger (36.8\% vs. 17.9\%). Our full method CUT has the flexibility to enlarge the horses, as a means of better matching of the training statistics than CycleGAN. FastCUT behaves more conservatively like CycleGAN.
 
@@ -144,7 +144,7 @@ python -m experiments grumpifycat test 0   # CUT
 python -m experiments grumpifycat test 1   # FastCUT
 ```
 
-Possible commands are run, run_test, launch, close, and so on. Please see experiments/__main__.py for all commands
+Possible commands are run, run_test, launch, close, and so on. Please see `experiments/__main__.py` for all commands
 
 
 
@@ -156,14 +156,6 @@ The tutorial for using pretrained models will be released soon.
 
 The tutorial for the Single-Image Translation will be released soon.
 
-
-
-
-<!-- The other datasets can be downloaded using -->
-<!-- ```bash -->
-<!-- bash ./datasets/download_cyclegan_dataset.sh [dataset_name] -->
-<!-- ``` -->
-<!-- , a script provided by the [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/datasets.md) repo. -->
 
 
 ### Citation
