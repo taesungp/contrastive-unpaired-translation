@@ -11,7 +11,7 @@
 
 
 
-We provide our PyTorch implementation for unpaired image-to-image translation based on patchwise contrastive learning and adversarial learning.  No hand-crafted loss and inverse network is used. Compared to [CycleGAN](https://github.com/junyanz/CycleGAN), our model training is faster and less memory-intensive. In addition, our method can be extended to single image training, where each “domain” is only a *single* image.
+We provide our PyTorch implementation of unpaired image-to-image translation based on patchwise contrastive learning and adversarial learning.  No hand-crafted loss and inverse network is used. Compared to [CycleGAN](https://github.com/junyanz/CycleGAN), our model training is faster and less memory-intensive. In addition, our method can be extended to single image training, where each “domain” is only a *single* image.
 
 
 
@@ -33,7 +33,7 @@ cross_entropy_loss = torch.nn.CrossEntropyLoss()
 
 # Input: f_q (BxCxS) and sampled features from H(G_enc(x))
 # Input: f_k (BxCxS) are sampled features from H(G_enc(G(x))
-# Input: tau is the temperature used in NCE loss.
+# Input: tau is the temperature used in PatchNCE loss.
 # Output: PatchNCE loss
 def PatchNCELoss(f_q, f_k, tau=0.07):
     # batch size, channel size, and number of sample locations
@@ -52,7 +52,7 @@ def PatchNCELoss(f_q, f_k, tau=0.07):
     # calculate logits: (B)x(S)x(S+1)
     logits = torch.cat((l_pos, l_neg), dim=2) / tau
 
-    # return NCE loss
+    # return PatchNCE loss
     predictions = logits.flatten(0, 1)
     targets = torch.zeros(B * S, dtype=torch.long)
     return cross_entropy_loss(predictions, targets)
@@ -112,17 +112,21 @@ python train.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mod
  ```bash
 python train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT --CUT_mode FastCUT
 ```
-CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory), and faster (twice faster to train) alternative to CycleGAN, using the same architecture of CycleGAN networks. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
 The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
 - Test the CUT model:
 ```bash
 python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT --phase train
-
 ```
 
 The test results will be saved to a html file here: `./results/grumpifycat/latest_test/index.html`.
 
+### CUT, FastCUT, and CycleGAN
+<img src="imgs/horse2zebra_comparison.jpg" width="800px"/><br>
+
+CUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory, can fit a larger image), and faster (twice faster to train) alternative to CycleGAN. Please refer to the [paper](https://arxiv.org/abs/2007.15651) for more details.
+
+In the above figure, we measure the percentage of pixels belonging to the horse/zebra bodies, using a pre-trained semantic segmentation model. We find a distribution mismatch between sizes of horses and zebras images -- zebras usually appear larger (36.8\% vs. 17.9\%). Our full method CUT has the flexibility to enlarge the horses, as a means of better matching of the training statistics than CycleGAN. FastCUT behaves more conservatively like CycleGAN.
 
 ### Training using our launcher scripts
 
@@ -140,7 +144,7 @@ python -m experiments grumpifycat test 0   # CUT
 python -m experiments grumpifycat test 1   # FastCUT
 ```
 
-Possible commands are run, run_test, launch, close, and so on. Please see experiments/__main__.py for all commands
+Possible commands are run, run_test, launch, close, and so on. Please see `experiments/__main__.py` for all commands
 
 
 
@@ -154,14 +158,6 @@ The tutorial for the Single-Image Translation will be released soon.
 
 
 
-
-<!-- The other datasets can be downloaded using -->
-<!-- ```bash -->
-<!-- bash ./datasets/download_cyclegan_dataset.sh [dataset_name] -->
-<!-- ``` -->
-<!-- , a script provided by the [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/docs/datasets.md) repo. -->
-
-
 ### Citation
 If you use this code for your research, please cite our [paper](https://arxiv.org/pdf/2007.15651).
 ```
@@ -170,6 +166,24 @@ If you use this code for your research, please cite our [paper](https://arxiv.or
   author={Taesung Park and Alexei A. Efros and Richard Zhang and Jun-Yan Zhu},
   booktitle={European Conference on Computer Vision},
   year={2020}
+}
+```
+
+If you use the original [pix2pix](https://phillipi.github.io/pix2pix/) and [CycleGAN](https://junyanz.github.io/CycleGAN/) model included in this repo, please cite the following papers
+```
+@inproceedings{CycleGAN2017,
+  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networkss},
+  author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
+  booktitle={Computer Vision (ICCV), 2017 IEEE International Conference on},
+  year={2017}
+}
+
+
+@inproceedings{isola2017image,
+  title={Image-to-Image Translation with Conditional Adversarial Networks},
+  author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
+  booktitle={Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on},
+  year={2017}
 }
 ```
 
