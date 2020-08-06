@@ -144,7 +144,36 @@ python -m experiments grumpifycat test 0   # CUT
 python -m experiments grumpifycat test 1   # FastCUT
 ```
 
-Possible commands are run, run_test, launch, close, and so on. Please see `experiments/__main__.py` for all commands
+Possible commands are run, run_test, launch, close, and so on. Please see `experiments/__main__.py` for all commands. Launcher is easy and quick to define and use. For example, the grumpifycat launcher is defined in a few lines:
+```python
+from .tmux_launcher import Options, TmuxLauncher
+
+
+class Launcher(TmuxLauncher):
+    def common_options(self):
+        return [
+            Options(    # Command 0
+                dataroot="./datasets/grumpifycat",
+                name="grumpifycat_CUT",
+                CUT_mode="CUT"
+            ),
+
+            Options(    # Command 1
+                dataroot="./datasets/grumpifycat",
+                name="grumpifycat_FastCUT",
+                CUT_mode="FastCUT",
+            )
+        ]
+
+    def commands(self):
+        return ["python train.py " + str(opt) for opt in self.common_options()]
+
+    def test_commands(self):
+        # Russian Blue -> Grumpy Cats dataset does not have test split.
+        # Therefore, let's set the test split to be the "train" set.
+        return ["python test.py " + str(opt.set(phase='train')) for opt in self.common_options()]
+
+```
 
 
 
@@ -155,6 +184,10 @@ The tutorial for using pretrained models will be released soon.
 ### SinCUT Single Image Unpaired Training
 
 The tutorial for the Single-Image Translation will be released soon.
+
+
+### [Datasets](./docs/datasets.md)
+Download CUT/CycleGAN/pix2pix datasets and learn how to create your own datasets.
 
 
 
