@@ -2,7 +2,7 @@
 
 # Contrastive Unpaired Translation (CUT)
 
-### [video](https://youtu.be/Llg0vE_MVgk) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/pdf/2007.15651)
+### [video (1m)](https://youtu.be/Llg0vE_MVgk) |  [video (10m)](https://youtu.be/jSGOzjmN8q0) | [website](http://taesung.me/ContrastiveUnpairedTranslation/) |   [paper](https://arxiv.org/pdf/2007.15651)
 <br>
 
 <img src='imgs/gif_cut.gif' align="right" width=960>
