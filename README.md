@@ -205,9 +205,9 @@ If you use this code for your research, please cite our [paper](https://arxiv.or
 If you use the original [pix2pix](https://phillipi.github.io/pix2pix/) and [CycleGAN](https://junyanz.github.io/CycleGAN/) model included in this repo, please cite the following papers
 ```
 @inproceedings{CycleGAN2017,
-  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networkss},
+  title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks},
   author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
-  booktitle={Computer Vision (ICCV), 2017 IEEE International Conference on},
+  booktitle={IEEE International Conference on Computer Vision (ICCV)},
   year={2017}
 }
 
@@ -215,7 +215,7 @@ If you use the original [pix2pix](https://phillipi.github.io/pix2pix/) and [Cycl
 @inproceedings{isola2017image,
   title={Image-to-Image Translation with Conditional Adversarial Networks},
   author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
-  booktitle={Computer Vision and Pattern Recognition (CVPR), 2017 IEEE Conference on},
+  booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
   year={2017}
 }
 ```
