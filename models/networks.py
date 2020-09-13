@@ -543,12 +543,16 @@ class PatchSampleF(nn.Module):
         self.init_type = init_type
         self.init_gain = init_gain
         self.gpu_ids = gpu_ids
+        if (gpu_ids == -1 or len(gpu_ids) == 0):
+            self.device = 'cpu'
+        else:
+            self.device = 'cuda:0'
 
     def create_mlp(self, feats):
         for mlp_id, feat in enumerate(feats):
             input_nc = feat.shape[1]
             mlp = nn.Sequential(*[nn.Linear(input_nc, self.nc), nn.ReLU(), nn.Linear(self.nc, self.nc)])
-            mlp.cuda()
+            mlp.to(self.device)
             setattr(self, 'mlp_%d' % mlp_id, mlp)
         init_net(self, self.init_type, self.init_gain, self.gpu_ids)
         self.mlp_init = True

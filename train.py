@@ -29,14 +29,18 @@ if __name__ == '__main__':
 
         dataset.set_epoch(epoch)
         for i, data in enumerate(dataset):  # inner loop within one epoch
+            print(f'i: {i}')
             iter_start_time = time.time()  # timer for computation per iteration
             if total_iters % opt.print_freq == 0:
                 t_data = iter_start_time - iter_data_time
+            data["A"] = torch.cat(3*[data["A"]])
 
             batch_size = data["A"].size(0)
+            print(f'data A size: {data["A"].size()}')
+            print(f'data A type: {data["A"].type}')
             total_iters += batch_size
             epoch_iter += batch_size
-            torch.cuda.synchronize()
+            # torch.cuda.synchronize()
             optimize_start_time = time.time()
             model.set_input(data)         # unpack data from dataset and apply preprocessing
             if epoch == opt.epoch_count and i == 0:
@@ -44,7 +48,7 @@ if __name__ == '__main__':
                 model.setup(opt)               # regular setup: load and print networks; create schedulers
                 model.parallelize()
             model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
-            torch.cuda.synchronize()
+            # torch.cuda.synchronize()
             optimize_time = (time.time() - optimize_start_time) / batch_size * 0.005 + 0.995 * optimize_time
 
             if total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file

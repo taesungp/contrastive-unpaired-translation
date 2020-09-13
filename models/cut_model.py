@@ -19,7 +19,7 @@ class CUTModel(BaseModel):
     def modify_commandline_options(parser, is_train=True):
         """  Configures options specific for CUT model
         """
-        parser.add_argument('--CUT_mode', type=str, default="CUT", choices='(CUT, cut, FastCUT, fastcut)')
+        parser.add_argument('--CUT_mode', type=str, default="CUT", choices='(CUT, cut, FastCUT, fastcut, single_image)')
 
         parser.add_argument('--lambda_GAN', type=float, default=1.0, help='weight for GAN loss：GAN(G(X))')
         parser.add_argument('--lambda_NCE', type=float, default=1.0, help='weight for NCE loss: NCE(G(X), X)')
@@ -96,7 +96,10 @@ class CUTModel(BaseModel):
         initialized at the first feedforward pass with some input images.
         Please also see PatchSampleF.create_mlp(), which is called at the first forward() call.
         """
-        bs_per_gpu = self.real_A.size(0) // len(self.opt.gpu_ids)
+        if ( len(self.opt.gpu_ids) != 0):
+            bs_per_gpu = self.real_A.size(0) // len(self.opt.gpu_ids)
+        else:
+            bs_per_gpu = self.real_A.size(0)
         self.real_A = self.real_A[:bs_per_gpu]
         self.real_B = self.real_B[:bs_per_gpu]
         self.forward()                     # compute fake images: G(A)
@@ -138,6 +141,7 @@ class CUTModel(BaseModel):
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        print('in CUT model')
         self.real = torch.cat((self.real_A, self.real_B), dim=0) if self.opt.nce_idt else self.real_A
         if self.opt.flip_equivariance:
             self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
@@ -152,9 +156,23 @@ class CUTModel(BaseModel):
     def backward_D(self):
         if self.opt.lambda_GAN > 0.0:
             """Calculate GAN loss for the discriminator"""
+            # patchsize = 64
+            #
             fake = self.fake_B.detach()
+            # _, c, x, y = fake.shape
+            #
+            # # extract patches
+            # patches = fake.permute(0, 2, 3, 1)
+            # patches = patches.unfold(1, patchsize, 1).unfold(2, patchsize, 1)
+            # num_rows = patches.shape[1]
+            # num_cols = patches.shape[2]
+            # patches = patches.contiguous().view((-1, 3, patchsize, patchsize))
+            # inds = np.random.randint(0,len(patches)-1,16)
+            # patches = patches[inds]
+
+
             # Fake; stop backprop to the generator by detaching fake_B
-            pred_fake = self.netD(fake)
+            pred_fake = self.netD(fake)  # change to patches
             self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
             # Real
             pred_real = self.netD(self.real_B)
@@ -164,6 +182,7 @@ class CUTModel(BaseModel):
             # combine loss and calculate gradients
             self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
             self.loss_D.backward()
+            print((self.loss_D).item())  # Aharon added this
         else:
             self.loss_D_real, self.loss_D_fake, self.loss_D = 0.0, 0.0, 0.0
 
@@ -192,6 +211,7 @@ class CUTModel(BaseModel):
 
         self.loss_G.backward()
 
+        print((self.loss_G).item())  # Aharon added this
     def calculate_NCE_loss(self, src, tgt):
         n_layers = len(self.nce_layers)
         feat_q = self.netG(tgt, self.nce_layers, encode_only=True)
