@@ -57,10 +57,17 @@ class BaseOptions():
         parser.add_argument('--preprocess', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop | crop | scale_width | scale_width_and_crop | none]')
         parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data augmentation')
         parser.add_argument('--display_winsize', type=int, default=256, help='display window size for both visdom and HTML')
+        parser.add_argument('--random_scale_max', type=float, default=3.0,
+                            help='(used for single image translation) Randomly scale the image by the specified factor as data augmentation.')
         # additional parameters
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
         parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
+
+        # parameters related to StyleGAN2-based networks
+        parser.add_argument('--stylegan2_G_num_downsampling',
+                            default=1, type=int,
+                            help='Number of downsampling layers used by StyleGAN2Generator')
 
         self.initialized = True
         return parser

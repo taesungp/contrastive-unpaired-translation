@@ -23,9 +23,11 @@ class CUTModel(BaseModel):
 
         parser.add_argument('--lambda_GAN', type=float, default=1.0, help='weight for GAN loss：GAN(G(X))')
         parser.add_argument('--lambda_NCE', type=float, default=1.0, help='weight for NCE loss: NCE(G(X), X)')
-
         parser.add_argument('--nce_idt', type=util.str2bool, nargs='?', const=True, default=False, help='use NCE loss for identity mapping: NCE(G(Y), Y))')
         parser.add_argument('--nce_layers', type=str, default='0,4,8,12,16', help='compute NCE loss on which layers')
+        parser.add_argument('--nce_includes_all_negatives_from_minibatch',
+                            type=util.str2bool, nargs='?', const=True, default=False,
+                            help='(used for single image translation) If True, include the negatives from the other samples of the minibatch when computing the contrastive loss. Please see models/patchnce.py for more details.')
         parser.add_argument('--netF', type=str, default='mlp_sample', choices=['sample', 'reshape', 'mlp_sample'], help='how to downsample the feature map')
         parser.add_argument('--netF_nc', type=int, default=256)
         parser.add_argument('--nce_T', type=float, default=0.07, help='temperature for NCE loss')
@@ -101,27 +103,31 @@ class CUTModel(BaseModel):
         self.real_B = self.real_B[:bs_per_gpu]
         self.forward()                     # compute fake images: G(A)
         if self.opt.isTrain:
-            self.backward_D()                  # calculate gradients for D
-            self.backward_G()                   # calculate graidents for G
+            self.compute_D_loss().backward()                  # calculate gradients for D
+            self.compute_G_loss().backward()                   # calculate graidents for G
             if self.opt.lambda_NCE > 0.0:
                 self.optimizer_F = torch.optim.Adam(self.netF.parameters(), lr=self.opt.lr, betas=(self.opt.beta1, self.opt.beta2))
                 self.optimizers.append(self.optimizer_F)
 
     def optimize_parameters(self):
         # forward
-        self.forward()                   # compute fake images: G(A)
+        self.forward()
+
         # update D
-        self.set_requires_grad(self.netD, True)  # enable backprop for D
-        self.optimizer_D.zero_grad()     # set D's gradients to zero
-        self.backward_D()                # calculate gradients for D
-        self.optimizer_D.step()          # update D's weights
+        self.set_requires_grad(self.netD, True)
+        self.optimizer_D.zero_grad()
+        self.loss_D = self.compute_D_loss()
+        self.loss_D.backward()
+        self.optimizer_D.step()
+
         # update G
-        self.set_requires_grad(self.netD, False)  # D requires no gradients when optimizing G
-        self.optimizer_G.zero_grad()        # set G's gradients to zero
+        self.set_requires_grad(self.netD, False)
+        self.optimizer_G.zero_grad()
         if self.opt.netF == 'mlp_sample':
             self.optimizer_F.zero_grad()
-        self.backward_G()                   # calculate graidents for G
-        self.optimizer_G.step()             # udpate G's weights
+        self.loss_G = self.compute_G_loss()
+        self.loss_G.backward()
+        self.optimizer_G.step()
         if self.opt.netF == 'mlp_sample':
             self.optimizer_F.step()
 
@@ -138,7 +144,7 @@ class CUTModel(BaseModel):
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.real = torch.cat((self.real_A, self.real_B), dim=0) if self.opt.nce_idt else self.real_A
+        self.real = torch.cat((self.real_A, self.real_B), dim=0) if self.opt.nce_idt and self.opt.isTrain else self.real_A
         if self.opt.flip_equivariance:
             self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
             if self.flipped_for_equivariance:
@@ -149,25 +155,22 @@ class CUTModel(BaseModel):
         if self.opt.nce_idt:
             self.idt_B = self.fake[self.real_A.size(0):]
 
-    def backward_D(self):
-        if self.opt.lambda_GAN > 0.0:
-            """Calculate GAN loss for the discriminator"""
-            fake = self.fake_B.detach()
-            # Fake; stop backprop to the generator by detaching fake_B
-            pred_fake = self.netD(fake)
-            self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
-            # Real
-            pred_real = self.netD(self.real_B)
-            loss_D_real_unweighted = self.criterionGAN(pred_real, True)
-            self.loss_D_real = loss_D_real_unweighted.mean()
+    def compute_D_loss(self):
+        """Calculate GAN loss for the discriminator"""
+        fake = self.fake_B.detach()
+        # Fake; stop backprop to the generator by detaching fake_B
+        pred_fake = self.netD(fake)
+        self.loss_D_fake = self.criterionGAN(pred_fake, False).mean()
+        # Real
+        self.pred_real = self.netD(self.real_B)
+        loss_D_real = self.criterionGAN(self.pred_real, True)
+        self.loss_D_real = loss_D_real.mean()
 
-            # combine loss and calculate gradients
-            self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
-            self.loss_D.backward()
-        else:
-            self.loss_D_real, self.loss_D_fake, self.loss_D = 0.0, 0.0, 0.0
+        # combine loss and calculate gradients
+        self.loss_D = (self.loss_D_fake + self.loss_D_real) * 0.5
+        return self.loss_D
 
-    def backward_G(self):
+    def compute_G_loss(self):
         """Calculate GAN and NCE loss for the generator"""
         fake = self.fake_B
         # First, G(A) should fake the discriminator
@@ -189,8 +192,7 @@ class CUTModel(BaseModel):
             loss_NCE_both = self.loss_NCE
 
         self.loss_G = self.loss_G_GAN + loss_NCE_both
-
-        self.loss_G.backward()
+        return self.loss_G
 
     def calculate_NCE_loss(self, src, tgt):
         n_layers = len(self.nce_layers)

@@ -693,7 +693,7 @@ class ResBlock(nn.Module):
 
 
 class StyleGAN2Discriminator(nn.Module):
-    def __init__(self, input_nc, ndf=64, n_layers=3, norm_layer=nn.BatchNorm2d, no_antialias=False, size=None, opt=None):
+    def __init__(self, input_nc, ndf=64, n_layers=3, no_antialias=False, size=None, opt=None):
         super().__init__()
         self.opt = opt
         self.stddev_group = 16
@@ -795,7 +795,7 @@ class TileStyleGAN2Discriminator(StyleGAN2Discriminator):
 
 
 class StyleGAN2Encoder(nn.Module):
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
+    def __init__(self, input_nc, output_nc, ngf=64, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
         super().__init__()
         assert opt is not None
         self.opt = opt
@@ -818,18 +818,16 @@ class StyleGAN2Encoder(nn.Module):
         convs = [nn.Identity(),
                  ConvLayer(3, channels[cur_res], 1)]
 
-        num_downsampling = self.opt.G_n_downsampling
+        num_downsampling = self.opt.stylegan2_G_num_downsampling
         for i in range(num_downsampling):
             in_channel = channels[cur_res]
             out_channel = channels[cur_res // 2]
-            convs.append(ResBlock(in_channel, out_channel, blur_kernel, downsample=True,
-                                  skip_gain=opt.resnet_skip_gain))
+            convs.append(ResBlock(in_channel, out_channel, blur_kernel, downsample=True))
             cur_res = cur_res // 2
 
         for i in range(n_blocks // 2):
             n_channel = channels[cur_res]
-            convs.append(ResBlock(n_channel, n_channel, downsample=False,
-                                  skip_gain=opt.resnet_skip_gain))
+            convs.append(ResBlock(n_channel, n_channel, downsample=False))
 
         self.convs = nn.Sequential(*convs)
 
@@ -851,7 +849,7 @@ class StyleGAN2Encoder(nn.Module):
 
 
 class StyleGAN2Decoder(nn.Module):
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
+    def __init__(self, input_nc, output_nc, ngf=64, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
         super().__init__()
         assert opt is not None
         self.opt = opt
@@ -871,13 +869,13 @@ class StyleGAN2Decoder(nn.Module):
             1024: int(round(16 * channel_multiplier)),
         }
 
-        num_downsampling = self.opt.G_n_downsampling
+        num_downsampling = self.opt.stylegan2_G_num_downsampling
         cur_res = 2 ** int((np.rint(np.log2(min(opt.load_size, opt.crop_size))))) // (2 ** num_downsampling)
         convs = []
 
         for i in range(n_blocks // 2):
             n_channel = channels[cur_res]
-            convs.append(ResBlock(n_channel, n_channel, downsample=False, skip_gain=opt.resnet_skip_gain))
+            convs.append(ResBlock(n_channel, n_channel, downsample=False))
 
         for i in range(num_downsampling):
             in_channel = channels[cur_res]
@@ -897,14 +895,11 @@ class StyleGAN2Decoder(nn.Module):
 
 
 class StyleGAN2Generator(nn.Module):
-    def __init__(self, input_nc, output_nc, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
+    def __init__(self, input_nc, output_nc, ngf=64, use_dropout=False, n_blocks=6, padding_type='reflect', no_antialias=False, opt=None):
         super().__init__()
         self.opt = opt
-        self.encoder = StyleGAN2Encoder(input_nc, output_nc, ngf, norm_layer, use_dropout, n_blocks, padding_type, no_antialias, opt)
-        self.decoder = StyleGAN2Decoder(input_nc, output_nc, ngf, norm_layer, use_dropout, n_blocks, padding_type, no_antialias, opt)
-
-        if self.opt.G_learns_residual:
-            self.residual_gain = nn.Parameter(torch.from_numpy(np.array([1, -1], dtype=np.float32)).cuda())
+        self.encoder = StyleGAN2Encoder(input_nc, output_nc, ngf, use_dropout, n_blocks, padding_type, no_antialias, opt)
+        self.decoder = StyleGAN2Decoder(input_nc, output_nc, ngf, use_dropout, n_blocks, padding_type, no_antialias, opt)
 
     def forward(self, input, layers=[], encode_only=False):
         feat, feats = self.encoder(input, layers, True)
@@ -912,9 +907,6 @@ class StyleGAN2Generator(nn.Module):
             return feats
         else:
             fake = self.decoder(feat)
-            if self.opt.G_learns_residual:
-                ratio = F.softmax(self.residual_gain, dim=0)
-                feat = input * ratio[0] + fake * ratio[1]
 
             if len(layers) > 0:
                 return fake, feats

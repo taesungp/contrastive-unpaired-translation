@@ -257,9 +257,9 @@ def define_G(input_nc, output_nc, ngf, netG, norm='batch', use_dropout=False, in
     elif netG == 'unet_256':
         net = UnetGenerator(input_nc, output_nc, 8, ngf, norm_layer=norm_layer, use_dropout=use_dropout)
     elif netG == 'stylegan2':
-        net = StyleGAN2Generator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, opt=opt)
+        net = StyleGAN2Generator(input_nc, output_nc, ngf, use_dropout=use_dropout, opt=opt)
     elif netG == 'smallstylegan2':
-        net = StyleGAN2Generator(input_nc, output_nc, ngf, norm_layer=norm_layer, use_dropout=use_dropout, n_blocks=2, opt=opt)
+        net = StyleGAN2Generator(input_nc, output_nc, ngf, use_dropout=use_dropout, n_blocks=2, opt=opt)
     elif netG == 'resnet_cat':
         n_blocks = 8
         net = G_Resnet(input_nc, output_nc, opt.nz, num_downs=2, n_res=n_blocks - 4, ngf=ngf, norm='inst', nl_layer='relu')
@@ -323,12 +323,8 @@ def define_D(input_nc, ndf, netD, n_layers_D=3, norm='batch', init_type='normal'
         net = NLayerDiscriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer, no_antialias=no_antialias,)
     elif netD == 'pixel':     # classify if each pixel is real or fake
         net = PixelDiscriminator(input_nc, ndf, norm_layer=norm_layer)
-    elif netD == "patch":
-        net = PatchDiscriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer, no_antialias=no_antialias)
-    elif netD == "tilestylegan2":
-        net = TileStyleGAN2Discriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer, no_antialias=no_antialias, size=opt.D_patch_size, opt=opt)
     elif 'stylegan2' in netD:
-        net = StyleGAN2Discriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer, no_antialias=no_antialias, opt=opt)
+        net = StyleGAN2Discriminator(input_nc, ndf, n_layers_D, no_antialias=no_antialias, opt=opt)
     else:
         raise NotImplementedError('Discriminator model name [%s] is not recognized' % netD)
     return init_net(net, init_type, init_gain, gpu_ids,

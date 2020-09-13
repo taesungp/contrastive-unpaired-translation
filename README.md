@@ -79,6 +79,10 @@ def PatchNCELoss(f_q, f_k, tau=0.07):
 - Python 3
 - CPU or NVIDIA GPU + CUDA CuDNN
 
+### Update log
+
+9/12/2020: Added single-image translation.
+
 ### Getting started
 
 - Clone this repo:
@@ -183,12 +187,38 @@ The tutorial for using pretrained models will be released soon.
 
 ### SinCUT Single Image Unpaired Training
 
-The tutorial for the Single-Image Translation will be released soon.
+To train SinCUT (single-image translation, shown in Fig 9, 13 and 14 of the paper), you need to
 
+1. set the `--model` option as `--model sincut`, which invokes the configuration and codes at `./models/sincut_model.py`, and
+2. specify the dataset directory of one image in each domain, such as the example dataset included in this repo at `./datasets/single_image_monet_etretat/`. 
+
+For example, to train a model for the [Etretat cliff (first image of Figure 13)](https://github.com/taesungp/contrastive-unpaired-translation/blob/master/imgs/singleimage.gif), please use the following command.
+
+```bash
+python train.py --model sincut --name singleimage_monet_etretat --dataroot ./datasets/single_image_monet_etretat
+```
+
+or by using the experiment launcher script,
+```bash
+python -m experiments singleimage run 0
+```
+
+For single-image translation, we adopt network architectural components of [StyleGAN2](https://github.com/NVlabs/stylegan2), as well as the pixel identity preservation loss used in [DTN](https://arxiv.org/abs/1611.02200) and [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/cycle_gan_model.py#L160). In particular, we adopted the code of [rosinality](https://github.com/rosinality/stylegan2-pytorch), which exists at `models/stylegan_networks.py`.
+
+The training takes several hours. To generate the final image using the checkpoint,
+
+```bash
+python test.py --model sincut --name singleimage_monet_etretat --dataroot ./datasets/single_image_monet_etretat
+```
+
+or simply
+
+```bash
+python -m experiments singleimage run_test 0
+```
 
 ### [Datasets](./docs/datasets.md)
 Download CUT/CycleGAN/pix2pix datasets and learn how to create your own datasets.
-
 
 
 ### Citation
