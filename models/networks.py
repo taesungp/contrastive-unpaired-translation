@@ -544,7 +544,8 @@ class PatchSampleF(nn.Module):
         for mlp_id, feat in enumerate(feats):
             input_nc = feat.shape[1]
             mlp = nn.Sequential(*[nn.Linear(input_nc, self.nc), nn.ReLU(), nn.Linear(self.nc, self.nc)])
-            mlp.cuda()
+            if len(self.gpu_ids) > 0:
+                mlp.cuda()
             setattr(self, 'mlp_%d' % mlp_id, mlp)
         init_net(self, self.init_type, self.init_gain, self.gpu_ids)
         self.mlp_init = True

@@ -36,7 +36,8 @@ if __name__ == '__main__':
             batch_size = data["A"].size(0)
             total_iters += batch_size
             epoch_iter += batch_size
-            torch.cuda.synchronize()
+            if len(opt.gpu_ids) > 0:
+                torch.cuda.synchronize()
             optimize_start_time = time.time()
             if epoch == opt.epoch_count and i == 0:
                 model.data_dependent_initialize(data)
@@ -44,7 +45,8 @@ if __name__ == '__main__':
                 model.parallelize()
             model.set_input(data)  # unpack data from dataset and apply preprocessing
             model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
-            torch.cuda.synchronize()
+            if len(opt.gpu_ids) > 0:
+                torch.cuda.synchronize()
             optimize_time = (time.time() - optimize_start_time) / batch_size * 0.005 + 0.995 * optimize_time
 
             if total_iters % opt.display_freq == 0:   # display images on visdom and save images to a HTML file
