@@ -106,7 +106,7 @@ class BaseModel(ABC):
                 net = getattr(self, 'net' + name)
                 setattr(self, 'net' + name, torch.nn.DataParallel(net, self.opt.gpu_ids))
 
-    def data_dependent_initialize(self):
+    def data_dependent_initialize(self, data):
         pass
 
     def eval(self):
