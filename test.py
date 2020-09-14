@@ -52,15 +52,15 @@ if __name__ == '__main__':
     webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
 
     for i, data in enumerate(dataset):
-        model.set_input(data)  # unpack data from data loader
         if i == 0:
-            model.data_dependent_initialize()
+            model.data_dependent_initialize(data)
             model.setup(opt)               # regular setup: load and print networks; create schedulers
             model.parallelize()
             if opt.eval:
                 model.eval()
         if i >= opt.num_test:  # only apply our model to opt.num_test images.
             break
+        model.set_input(data)  # unpack data from data loader
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
