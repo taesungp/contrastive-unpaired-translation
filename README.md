@@ -123,7 +123,7 @@ The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT --phase train
 ```
 
-The test results will be saved to a html file here: `./results/grumpifycat/latest_test/index.html`.
+The test results will be saved to a html file here: `./results/grumpifycat/latest_train/index.html`.
 
 ### CUT, FastCUT, and CycleGAN
 <img src="imgs/horse2zebra_comparison.jpg" width="800px"/><br>
