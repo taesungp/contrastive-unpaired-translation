@@ -247,7 +247,23 @@ python -m experiments singleimage run_test 0
 ```
 
 ### [Datasets](./docs/datasets.md)
-Download CUT/CycleGAN/pix2pix datasets and learn how to create your own datasets.
+Download CUT/CycleGAN/pix2pix datasets. For example,
+
+```bash
+bash datasets/download_cut_datasets.sh horse2zebra
+```
+
+The Cat2Dog dataset is prepared from the AFHQ dataset. Please visit https://github.com/clovaai/stargan-v2 and download the AFHQ dataset by `bash download.sh afhq-dataset` of the github repo. Then reorganize directories as follows.
+```bash
+mkdir datasets/cat2dog
+ln -s datasets/cat2dog/trainA [path_to_afhq]/train/cat
+ln -s datasets/cat2dog/trainB [path_to_afhq]/train/dog
+ln -s datasets/cat2dog/testA [path_to_afhq]/test/cat
+ln -s datasets/cat2dog/testB [path_to_afhq]/test/dog
+```
+
+The Cityscapes dataset can be downloaded from https://cityscapes-dataset.com.
+After that, use the script `./datasets/prepare_cityscapes_dataset.py` to prepare the dataset. 
 
 
 ### Citation
