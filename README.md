@@ -181,9 +181,36 @@ class Launcher(TmuxLauncher):
 
 
 
-### Apply a pre-trained CUT model and evaluate
+### Apply a pre-trained CUT model and evaluate FID
 
-The tutorial for using pretrained models will be released soon.
+To run the pretrained models, run the following.
+
+```bash
+
+# Download and unzip the pretrained models. The weights should be located at
+# checkpoints/horse2zebra_cut_pretrained/latest_net_G.pth, for example.
+wget http://efrosgans.eecs.berkeley.edu/CUT/pretrained_models.tar
+tar -xf pretrained_models.tar
+
+# Generate outputs. The dataset paths might need to be adjusted.
+# To do this, modify the lines of experiments/pretrained_launcher.py
+# [id] corresponds to the respective commands defined in pretrained_launcher.py
+# 0 - CUT on Cityscapes
+# 1 - FastCUT on Cityscapes
+# 2 - CUT on Horse2Zebra
+# 3 - FastCUT on Horse2Zebra
+# 4 - CUT on Cat2Dog
+# 5 - FastCUT on Cat2Dog
+python -m experiments pretrained run_test [id]
+
+# Evaluate FID. To do this, first install pytorch-fid of https://github.com/mseitzer/pytorch-fid
+# pip install pytorch-fid
+# For example, to evaluate horse2zebra FID of CUT,
+# python -m pytorch_fid ./datasets/horse2zebra/testB/ results/horse2zebra_cut_pretrained/test_latest/images/fake_B/
+# To evaluate Cityscapes FID of FastCUT,
+# python -m pytorch_fid ./datasets/cityscapes/valA/ ~/projects/contrastive-unpaired-translation/results/cityscapes_fastcut_pretrained/test_latest/images/fake_B/
+python -m pytorch_fid [path to real test images] [path to generated images]
+
 
 ### SinCUT Single Image Unpaired Training
 
