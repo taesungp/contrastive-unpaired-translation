@@ -211,6 +211,8 @@ python -m experiments pretrained run_test [id]
 # python -m pytorch_fid ./datasets/cityscapes/valA/ ~/projects/contrastive-unpaired-translation/results/cityscapes_fastcut_pretrained/test_latest/images/fake_B/
 python -m pytorch_fid [path to real test images] [path to generated images]
 
+```
+
 
 ### SinCUT Single Image Unpaired Training
 
