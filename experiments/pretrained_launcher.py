@@ -6,10 +6,13 @@ class Launcher(TmuxLauncher):
         return [
             # Command 0
             Options(
-                dataroot="./datasets/cityscapes_unaligned/cityscapes/",
+                # NOTE: download the resized (and compressed) val set from
+                # http://efrosgans.eecs.berkeley.edu/CUT/datasets/cityscapes_val_for_CUT.tar
+                dataroot="datasets/cityscapes/cityscapes_val/",
                 direction="BtoA",
+                phase="val",
                 name="cityscapes_cut_pretrained",
-                CUT_mode="CUT"
+                CUT_mode="CUT",
             ),
 
             # Command 1
