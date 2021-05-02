@@ -209,9 +209,12 @@ python -m experiments pretrained run_test [id]
 # python -m pytorch_fid ./datasets/horse2zebra/testB/ results/horse2zebra_cut_pretrained/test_latest/images/fake_B/
 # To evaluate Cityscapes FID of FastCUT,
 # python -m pytorch_fid ./datasets/cityscapes/valA/ ~/projects/contrastive-unpaired-translation/results/cityscapes_fastcut_pretrained/test_latest/images/fake_B/
+# Note that a special dataset needs to be used for the Cityscapes model. Please read below. 
 python -m pytorch_fid [path to real test images] [path to generated images]
 
 ```
+
+Note: the Cityscapes pretrained model was trained and evaluated on a resized and JPEG-compressed version of the original Cityscapes dataset. To perform evaluation, please download [this](http://efrosgans.eecs.berkeley.edu/CUT/datasets/cityscapes_val_for_CUT.tar) validation set and perform evaluation. 
 
 
 ### SinCUT Single Image Unpaired Training
