@@ -73,7 +73,7 @@ class UnalignedDataset(BaseDataset):
     def __len__(self):
         """Return the total number of images in the dataset.
 
-        As we have two datasets with potentially different number of images,
-        we take a maximum of
+        As we have two datasets,
+        we take the sum
         """
-        return max(self.A_size, self.B_size)
+        return self.A_size + self.B_size
