@@ -11,13 +11,14 @@ class PatchNCELoss(nn.Module):
         self.mask_dtype = torch.uint8 if version.parse(torch.__version__) < version.parse('1.2.0') else torch.bool
 
     def forward(self, feat_q, feat_k):
-        batchSize = feat_q.shape[0]
+        num_patches = feat_q.shape[0]
         dim = feat_q.shape[1]
         feat_k = feat_k.detach()
 
         # pos logit
-        l_pos = torch.bmm(feat_q.view(batchSize, 1, -1), feat_k.view(batchSize, -1, 1))
-        l_pos = l_pos.view(batchSize, 1)
+        l_pos = torch.bmm(
+            feat_q.view(num_patches, 1, -1), feat_k.view(num_patches, -1, 1))
+        l_pos = l_pos.view(num_patches, 1)
 
         # neg logit
 
