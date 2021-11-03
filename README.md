@@ -269,6 +269,19 @@ The Cityscapes dataset can be downloaded from https://cityscapes-dataset.com.
 After that, use the script `./datasets/prepare_cityscapes_dataset.py` to prepare the dataset. 
 
 
+#### Preprocessing of input images
+
+The preprocessing of the input images, such as resizing or random cropping, is controlled by the option `--preprocess`, `--load_size`, and `--crop_size`. The usage follows the [CycleGAN/pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix) repo. 
+
+For example, the default setting `--preprocess resize_and_crop --load_size 286 --crop_size 256` resizes the input image to `286x286`, and then makes a random crop of size `256x256` as a way to perform data augmentation. There are other preprocessing options that can be specified, and they are specified in [base_dataset.py](https://github.com/taesungp/contrastive-unpaired-translation/blob/master/data/base_dataset.py#L82). Below are some example options. 
+
+ - `--preprocess none`: does not perform any preprocessing. Note that the image size is still scaled to be a closest multiple of 4, because the convolutional generator cannot maintain the same image size otherwise. 
+ - `--preprocess scale_width --load_size 768`: scales the width of the image to be of size 768.
+ - `--preprocess scale_shortside_and_crop`: scales the image preserving aspect ratio so that the short side is `load_size`, and then performs random cropping of window size `crop_size`.
+
+More preprocessing options can be added by modifying [`get_transform()`](https://github.com/taesungp/contrastive-unpaired-translation/blob/master/data/base_dataset.py#L82) of `base_dataset.py`. 
+
+
 ### Citation
 If you use this code for your research, please cite our [paper](https://arxiv.org/pdf/2007.15651).
 ```
