@@ -43,6 +43,7 @@ if __name__ == '__main__':
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
 
+        #Todo: Change output folder name
         short_path = ntpath.basename(img_path[0])
         name = os.path.splitext(short_path)[0]
         label = os.path.splitext(ntpath.basename(data['B_paths'][0]))[0]
