@@ -1,5 +1,5 @@
 """
-Usage: python generate.py --dataroot ./datasets/grumpifycat --checkpoints_dir ./checkpoints --result_dir ./results --name grumpycat_CUT --CUT_mode CUT --epoch latest --num_test 50 --gpu_ids 0
+Usage: python generate.py --dataroot ./datasets/grumpifycat --checkpoints_dir ./checkpoints --results_dir ./results --name grumpycat_CUT --CUT_mode CUT --phase train --epoch latest --num_test 50 --gpu_ids 0
 """
 import os
 from options.test_options import TestOptions
