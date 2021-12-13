@@ -26,9 +26,10 @@ if __name__ == '__main__':
     image_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))
 
     start = time.time()
-    print(len(dataset))
-    pbar = tqdm(total=int(len(dataset)))
-    for i, data in tqdm(enumerate(dataset)):
+    print("Number of available images: %d" % len(dataset))
+    image_amt = opt.num_test if opt.num_test > 0 else len(dataset)  # amount of images to generate
+    pbar = tqdm(total=int(image_amt))  # progress bar
+    for i, data in enumerate(dataset):
         pbar.update(1)
         if i == 0:
             model.data_dependent_initialize(data)
@@ -36,23 +37,19 @@ if __name__ == '__main__':
             model.parallelize()
             if opt.eval:
                 model.eval()
-        if i >= opt.num_test and opt.num_test != -1:  # only apply our model to opt.num_test images.
+        if i >= image_amt:  # only apply our model to opt.num_test images.
             break
         model.set_input(data)  # unpack data from data loader
         model.test()           # run inference
         visuals = model.get_current_visuals()  # get image results
         img_path = model.get_image_paths()     # get image paths
 
-        #Todo: Change output folder name
-        short_path = ntpath.basename(img_path[0])
-        name = os.path.splitext(short_path)[0]
-        label = os.path.splitext(ntpath.basename(data['B_paths'][0]))[0]
-        im_data = visuals['fake_B']
-        im = util.tensor2im(im_data)
-        image_name = '%s/%s.png' % (label, name)
-        os.makedirs(os.path.join(image_dir, label), exist_ok=True)
+        image_name = ntpath.basename(img_path[0])  # get image name
+        im_data = visuals['fake_B']  # get generated fake image
+        im = util.tensor2im(im_data)  # transform tensor to image
+        os.makedirs(image_dir, exist_ok=True)
         save_path = os.path.join(image_dir, image_name)
         util.save_image(im, save_path, aspect_ratio=1.0)
     pbar.close()
     end = time.time()
-    print("Generating %d images took %.2f seconds." % (len(dataset), (end - start)))
+    print("Generating %d images took %.2f seconds." % (image_amt, (end - start)))
