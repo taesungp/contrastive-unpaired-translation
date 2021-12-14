@@ -27,7 +27,7 @@ if __name__ == '__main__':
 
     start = time.time()
     print("Number of available images: %d" % len(dataset))
-    image_amt = opt.num_test if opt.num_test > 0 else len(dataset)  # amount of images to generate
+    image_amt = opt.num_test if opt.num_test > 0 else dataset.dataset.A_size  # amount of images to generate
     pbar = tqdm(total=int(image_amt))  # progress bar
     for i, data in enumerate(dataset):
         pbar.update(1)
