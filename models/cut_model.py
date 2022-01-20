@@ -99,9 +99,9 @@ class CUTModel(BaseModel):
         Please also see PatchSampleF.create_mlp(), which is called at the first forward() call.
         """
         bs_per_gpu = data["A"].size(0) // max(len(self.opt.gpu_ids), 1)
-        data["A"] = data["A"][:bs_per_gpu]
-        data["B"] = data["B"][:bs_per_gpu]
         self.set_input(data)
+        self.real_A = self.real_A[:bs_per_gpu]
+        self.real_B = self.real_B[:bs_per_gpu]
         self.forward()                     # compute fake images: G(A)
         if self.opt.isTrain:
             self.compute_D_loss().backward()                  # calculate gradients for D
