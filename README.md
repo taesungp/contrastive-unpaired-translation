@@ -120,7 +120,7 @@ The checkpoints will be stored at `./checkpoints/grumpycat_*/web`.
 
 - Test the CUT model:
 ```bash
-python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT --phase train
+python test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT --phase test
 ```
 
 The test results will be saved to a html file here: `./results/grumpifycat/latest_train/index.html`.
