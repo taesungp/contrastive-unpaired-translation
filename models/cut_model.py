@@ -59,7 +59,7 @@ class CUTModel(BaseModel):
         # specify the training losses you want to print out.
         # The training/test scripts will call <BaseModel.get_current_losses>
         self.loss_names = ['G_GAN', 'D_real', 'D_fake', 'G', 'NCE']
-        self.visual_names = ['real_A', 'fake_B', 'real_B']
+        self.visual_names = ['real_A', 'fake_B', 'real_B', 'fake_A']
         self.nce_layers = [int(i) for i in self.opt.nce_layers.split(',')]
 
         if opt.nce_idt and self.isTrain:
@@ -141,7 +141,7 @@ class CUTModel(BaseModel):
         AtoB = self.opt.direction == 'AtoB'
         self.real_A = input['A' if AtoB else 'B'].to(self.device)
         self.real_B = input['B' if AtoB else 'A'].to(self.device)
-        self.image_paths = input['A_paths' if AtoB else 'B_paths']
+        self.image_paths = input['A_paths'] + input['B_paths']
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
@@ -155,6 +155,11 @@ class CUTModel(BaseModel):
         self.fake_B = self.fake[:self.real_A.size(0)]
         if self.opt.nce_idt:
             self.idt_B = self.fake[self.real_A.size(0):]
+            
+        self.fake = self.netG(self.real_B)
+        self.fake_A = self.fake[:self.real_B.size(0)]
+        if self.opt.nce_idt:
+            self.idt_A = self.fake[self.real_B.size(0):]
 
     def compute_D_loss(self):
         """Calculate GAN loss for the discriminator"""
