@@ -256,3 +256,12 @@ class BaseModel(ABC):
 
     def generate_visuals_for_evaluation(self, data, mode):
         return {}
+
+    def compute_metrics_on_batch(self):
+        pass
+
+    def reset_metrics(self):
+        pass
+
+    def get_metrics(self):
+        return {}
