@@ -45,6 +45,7 @@ if __name__ == '__main__':
                 model.parallelize()
             model.set_input(data)  # unpack data from dataset and apply preprocessing
             model.optimize_parameters()   # calculate loss functions, get gradients, update network weights
+            model.compute_metrics_on_batch()
             if len(opt.gpu_ids) > 0:
                 torch.cuda.synchronize()
             optimize_time = (time.time() - optimize_start_time) / batch_size * 0.005 + 0.995 * optimize_time
@@ -67,6 +68,13 @@ if __name__ == '__main__':
                 model.save_networks(save_suffix)
 
             iter_data_time = time.time()
+
+        # Compute applicable metrics
+        metrics = model.get_metrics()
+        if 'fid' in metrics:
+            print(f'Epoch {epoch}; FID Score: {metrics["fid"]}')
+        # TODO add FID plot to visualizer as well
+        model.reset_metrics()
 
         if epoch % opt.save_epoch_freq == 0:              # cache our model every <save_epoch_freq> epochs
             print('saving the model at the end of epoch %d, iters %d' % (epoch, total_iters))
