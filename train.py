@@ -5,6 +5,7 @@ from data import create_dataset
 from models import create_model
 from util.visualizer import Visualizer
 
+import wandb
 
 if __name__ == '__main__':
     opt = TrainOptions().parse()   # get training options
@@ -19,6 +20,19 @@ if __name__ == '__main__':
     total_iters = 0                # the total number of training iterations
 
     optimize_time = 0.1
+
+    # Initialize Wandb
+    wandb.init('CUT_model')
+    wandb.define_metric("training_step")
+    wandb.define_metric("train/epoch", step_metric="training_step")
+    wandb.define_metric("train/gan_loss", step_metric="training_step")
+    wandb.define_metric("train/d_real_loss", step_metric="training_step")
+    wandb.define_metric("train/d_fake_loss", step_metric="training_step")
+    wandb.define_metric("train/g_loss", step_metric="training_step")
+    wandb.define_metric("train/nce_loss", step_metric="training_step")
+    
+    wandb.define_metric("train/mIOU", step_metric="train/epoch")
+    wandb.define_metric("train/fid", step_metric="train/epoch")
 
     times = []
     for epoch in range(opt.epoch_count, opt.n_epochs + opt.n_epochs_decay + 1):    # outer loop for different epochs; we save the model by <epoch_count>, <epoch_count>+<save_latest_freq>
@@ -55,6 +69,16 @@ if __name__ == '__main__':
                 model.compute_visuals()
                 visualizer.display_current_results(model.get_current_visuals(), epoch, save_result)
 
+                # WANDB
+                losses = model.get_current_losses()
+                wandb.log({
+                    'train/gan_loss': losses['G_GAN'],
+                    'train/d_real_loss': losses['D_real'],
+                    'train/d_fake_loss': losses['D_fake'],
+                    'train/g_loss': losses['G'],
+                    'train/nce_loss': losses['NCE'],
+                    'training_step' : i})
+
             if total_iters % opt.print_freq == 0:    # print training losses and save logging information to the disk
                 losses = model.get_current_losses()
                 visualizer.print_current_losses(epoch, epoch_iter, losses, optimize_time, t_data)
@@ -73,6 +97,16 @@ if __name__ == '__main__':
         metrics = model.get_metrics()
         if 'fid' in metrics:
             print(f'Epoch {epoch}; FID Score: {metrics["fid"]}')
+
+            # WANDB
+            images = model.get_current_visuals()
+            wandb.log({f"training/realA, Epoch {epoch}, Iter {i}": [wandb.Image(images['real_A'])]})
+            wandb.log({f"training/fakeB, Epoch {epoch}, Iter {i}": [wandb.Image(images['fake_B'])]})
+            wandb.log({f"training/realB, Epoch {epoch}, Iter {i}": [wandb.Image(images['real_B'])]})
+            wandb.log({
+                'train/epoch': epoch,
+                'train/fid': metrics["fid"]})
+
         # TODO add FID plot to visualizer as well
         model.reset_metrics()
 
