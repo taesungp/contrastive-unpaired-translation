@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # Initialize Wandb
     wandb.init('CUT_model')
     wandb.define_metric("training_step")
-    wandb.define_metric("train/epoch", step_metric="training_step")
+    wandb.define_metric("train/epoch")
     wandb.define_metric("train/gan_loss", step_metric="training_step")
     wandb.define_metric("train/d_real_loss", step_metric="training_step")
     wandb.define_metric("train/d_fake_loss", step_metric="training_step")
@@ -100,9 +100,9 @@ if __name__ == '__main__':
 
             # WANDB
             images = model.get_current_visuals()
-            wandb.log({f"training/realA, Epoch {epoch}, Iter {i}": [wandb.Image(images['real_A'])]})
-            wandb.log({f"training/fakeB, Epoch {epoch}, Iter {i}": [wandb.Image(images['fake_B'])]})
-            wandb.log({f"training/realB, Epoch {epoch}, Iter {i}": [wandb.Image(images['real_B'])]})
+            wandb.log({f"training/realA, Epoch {epoch}": [wandb.Image(images['real_A'])]})
+            wandb.log({f"training/fakeB, Epoch {epoch}": [wandb.Image(images['fake_B'])]})
+            wandb.log({f"training/realB, Epoch {epoch}": [wandb.Image(images['real_B'])]})
             wandb.log({
                 'train/epoch': epoch,
                 'train/fid': metrics["fid"]})
