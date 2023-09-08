@@ -211,4 +211,4 @@ class CUTModel(BaseModel):
             loss = crit(f_q, f_k) * self.opt.lambda_NCE
             total_nce_loss += loss.mean()
 
-        return total_nce_loss / n_layers
+        return total_nce_loss / len(feat_q)
