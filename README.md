@@ -253,7 +253,7 @@ python -m experiments singleimage run_test 0
 Download CUT/CycleGAN/pix2pix datasets. For example,
 
 ```bash
-bash datasets/download_cut_datasets.sh horse2zebra
+bash datasets/download_cut_dataset.sh horse2zebra
 ```
 
 The Cat2Dog dataset is prepared from the AFHQ dataset. Please visit https://github.com/clovaai/stargan-v2 and download the AFHQ dataset by `bash download.sh afhq-dataset` of the github repo. Then reorganize directories as follows.
