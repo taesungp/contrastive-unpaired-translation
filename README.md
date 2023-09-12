@@ -1,4 +1,12 @@
 
+## Changelog
+- Add `generate.py`
+- Modify print statements in `models\base_model.py`
+- Modify num_test option in `options\test_options.py`
+- Update `environement.yml`
+
+The file `generate.py` allows to generate an arbitrary number of fake images (in contrast to `test.py`, it ignores realA and realB images). Certain print statements in `base_model.py` were replaced with tqdm.write(), such that the progress bar can be properly displayed. Furthermore, the default num_test argument was modified to allow for an arbitrary large number of generated images (upper bound is the size of the trainA or testA dataset). Finally, pip and tqdm were added to the Conda `environement.yml` file.
+
 
 # Contrastive Unpaired Translation (CUT)
 
