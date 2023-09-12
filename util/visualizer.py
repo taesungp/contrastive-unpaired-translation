@@ -25,22 +25,61 @@ def save_images(webpage, visuals, image_path, aspect_ratio=1.0, width=256):
     This function will save images stored in 'visuals' to the HTML file specified by 'webpage'.
     """
     image_dir = webpage.get_image_dir()
-    short_path = ntpath.basename(image_path[0])
-    name = os.path.splitext(short_path)[0]
+    short_path = [ntpath.basename(p) for p in image_path]
+    name = [os.path.splitext(p)[0] for p in short_path]
 
-    webpage.add_header(name)
-    ims, txts, links = [], [], []
-
-    for label, im_data in visuals.items():
-        im = util.tensor2im(im_data)
-        image_name = '%s/%s.png' % (label, name)
-        os.makedirs(os.path.join(image_dir, label), exist_ok=True)
+    real_A = visuals['real_A']
+    fake_B = visuals['fake_B']
+    real_B = visuals['real_B']
+    fake_A = visuals['fake_A']
+    
+    batch_size = len(name) // 2
+    for idx, (r_A_im_b, r_B_im_b) in enumerate(zip(real_A, real_B)):
+        r_A_n_b = name[idx]
+        r_B_n_b = name[idx + batch_size]
+        ims, txts, links = [], [], []
+        webpage.add_header(r_A_n_b)
+        r_A_im = util.tensor2im(r_A_im_b.unsqueeze(0))
+        image_name = '%s/%s.png' % ('real_A', r_A_n_b)
+        os.makedirs(os.path.join(image_dir, 'real_A'), exist_ok=True)
         save_path = os.path.join(image_dir, image_name)
-        util.save_image(im, save_path, aspect_ratio=aspect_ratio)
+        util.save_image(r_A_im, save_path, aspect_ratio=aspect_ratio)
         ims.append(image_name)
-        txts.append(label)
+        txts.append('real_A')
         links.append(image_name)
-    webpage.add_images(ims, txts, links, width=width)
+        
+        f_B_im = util.tensor2im(fake_B[idx].unsqueeze(0))
+        image_name = '%s/%s.png' % ('fake_B', r_A_n_b)
+        os.makedirs(os.path.join(image_dir, 'fake_B'), exist_ok=True)
+        save_path = os.path.join(image_dir, image_name)
+        util.save_image(f_B_im, save_path, aspect_ratio=aspect_ratio)
+        ims.append(image_name)
+        txts.append('fake_B')
+        links.append(image_name)
+        
+        webpage.add_images(ims, txts, links, width=width)
+        ims, txts, links = [], [], []
+            
+        webpage.add_header(r_B_n_b)
+        r_B_im = util.tensor2im(r_B_im_b.unsqueeze(0))
+        image_name = '%s/%s.png' % ('real_B', r_B_n_b)
+        os.makedirs(os.path.join(image_dir, 'real_B'), exist_ok=True)
+        save_path = os.path.join(image_dir, image_name)
+        util.save_image(r_B_im, save_path, aspect_ratio=aspect_ratio)
+        ims.append(image_name)
+        txts.append('real_B')
+        links.append(image_name)
+        
+        f_A_im = util.tensor2im(fake_A[idx].unsqueeze(0))
+        image_name = '%s/%s.png' % ('fake_A', r_B_n_b)
+        os.makedirs(os.path.join(image_dir, 'fake_A'), exist_ok=True)
+        save_path = os.path.join(image_dir, image_name)
+        util.save_image(f_A_im, save_path, aspect_ratio=aspect_ratio)
+        ims.append(image_name)
+        txts.append('fake_A')
+        links.append(image_name)
+        
+        webpage.add_images(ims, txts, links, width=width)
 
 
 class Visualizer():
